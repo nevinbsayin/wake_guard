@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101918">
+    <title>WakeGuard — Driver alertness monitor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#" aria-label="WakeGuard home">
+          <span class="brand-mark" aria-hidden="true">W</span>
+          <span>Wake<span class="brand-light">Guard</span></span>
+        </a>
+        <div class="sidebar-label">MONITORING</div>
+        <a class="nav-item active" href="#monitor"><span class="nav-icon">◉</span> Live monitor</a>
+        <a class="nav-item" href="#settings"><span class="nav-icon">⚙</span> Alert settings</a>
+        <div class="sidebar-bottom">
+          <div class="privacy-card">
+            <span class="privacy-icon">◇</span>
+            <div><strong>Your privacy matters</strong><p>Video stays on this device. Nothing is recorded.</p></div>
+          </div>
+          <div class="sidebar-foot">WAKEGUARD <span>·</span> DRIVER SAFETY</div>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div class="breadcrumbs">Safety tools <span>/</span> <strong>Alertness</strong></div>
+          <div class="secure-label"><span class="secure-dot"></span> ON-DEVICE MONITORING</div>
+        </header>
+
+        <section class="page-heading" id="monitor">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-line"></span> YOUR CO-PILOT FOR THE ROAD</div>
+            <h1>Stay sharp.<br><span>Get there safe.</span></h1>
+            <p class="intro">Real-time signs of fatigue, watched privately through your camera.</p>
+          </div>
+          <div class="session-badge"><span class="pulse-dot"></span><span id="session-label">SESSION INACTIVE</span></div>
+        </section>
+
+        <section class="monitor-grid" aria-label="Live driver monitoring">
+          <article class="panel camera-panel">
+            <div class="panel-heading">
+              <div><span class="section-kicker">01 / CAMERA</span><h2>Live view</h2></div>
+              <span class="camera-state" id="camera-state"><span></span> Camera off</span>
+            </div>
+            <div class="camera-frame" id="camera-frame">
+              <video id="camera-video" autoplay muted playsinline></video>
+              <canvas id="overlay-canvas"></canvas>
+              <div class="camera-placeholder" id="camera-placeholder">
+                <div class="camera-orbit"><span class="camera-glyph">◎</span></div>
+                <strong>Your camera, your privacy</strong>
+                <p>Face landmarks are analyzed on your device.<br>Video is never saved or uploaded.</p>
+              </div>
+              <div class="camera-tag"><span class="live-indicator"></span><span id="view-tag">AWAITING START</span></div>
+              <div class="face-tag" id="face-tag"><span></span> FACE DETECTED</div>
+            </div>
+            <div class="camera-footer">
+              <div class="model-status" id="model-status"><span class="status-dot"></span><span>Ready to initialize detector</span></div>
+              <button class="button button-primary" id="start-button"><span class="button-symbol">▶</span> Start monitoring</button>
+              <button class="button button-stop" id="stop-button" hidden><span class="button-symbol">■</span> Stop session</button>
+            </div>
+            <p class="camera-error" id="camera-error" role="alert" hidden></p>
+          </article>
+
+          <div class="metrics-column">
+            <article class="panel alert-panel">
+              <div class="panel-heading">
+                <div><span class="section-kicker">02 / ALERTNESS</span><h2>Driver status</h2></div>
+                <span class="status-pill status-idle" id="alert-pill"><span class="status-pill-dot"></span><span id="alert-label">Standby</span></span>
+              </div>
+              <div class="alert-summary">
+                <div class="alert-icon" id="alert-icon"><span>✳</span></div>
+                <div><div class="alert-title" id="alert-title">Ready when you are</div><p id="alert-description">Start a session to begin checking for signs of fatigue.</p></div>
+              </div>
+              <div class="metric-list">
+                <div class="metric-row">
+                  <div class="metric-label"><span class="metric-icon">◡</span> Eye closure <span class="metric-hint">EAR</span></div>
+                  <strong id="ear-value">—</strong>
+                  <div class="metric-bar"><span id="ear-bar"></span></div>
+                </div>
+                <div class="metric-row">
+                  <div class="metric-label"><span class="metric-icon">◯</span> Mouth opening <span class="metric-hint">MAR</span></div>
+                  <strong id="mar-value">—</strong>
+                  <div class="metric-bar"><span id="mar-bar"></span></div>
+                </div>
+              </div>
+              <div class="threshold-note"><span>i</span> Drowsiness is estimated from eye closure and yawning. This is not a medical or vehicle-grade safety system.</div>
+            </article>
+
+            <article class="panel location-panel">
+              <div class="location-heading">
+                <div><span class="section-kicker">03 / CHECK-IN</span><h2>Trusted contact</h2></div>
+                <span class="location-icon">⌖</span>
+              </div>
+              <p class="location-copy">Share your location if an alert is raised. You stay in control of every message.</p>
+              <label class="field-label" for="contact-number">CONTACT PHONE</label>
+              <div class="contact-input-wrap"><span class="phone-prefix">✆</span><input id="contact-number" type="tel" autocomplete="tel" placeholder="+1 555 000 0000" aria-describedby="contact-note"></div>
+              <div class="location-footer">
+                <span class="location-state" id="location-state"><span class="location-dot"></span> Location not shared</span>
+                <button class="text-button" id="share-button" type="button">Share location <span>↗</span></button>
+              </div>
+              <p class="location-note" id="contact-note">Opens your messaging app with a location link. You review and send it.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="lower-grid" id="settings">
+          <article class="panel settings-panel">
+            <div class="panel-heading">
+              <div><span class="section-kicker">PERSONALIZE</span><h2>Alert sensitivity</h2></div>
+              <span class="setting-value" id="sensitivity-label">Balanced</span>
+            </div>
+            <p class="settings-copy">Choose how quickly a fatigue sign triggers a warning.</p>
+            <div class="sensitivity-options" role="group" aria-label="Alert sensitivity">
+              <button class="sensitivity-option" data-sensitivity="relaxed" type="button"><span class="option-mark"></span><span><strong>Relaxed</strong><small>Fewer alerts</small></span></button>
+              <button class="sensitivity-option selected" data-sensitivity="balanced" type="button"><span class="option-mark"></span><span><strong>Balanced</strong><small>Recommended</small></span></button>
+              <button class="sensitivity-option" data-sensitivity="sensitive" type="button"><span class="option-mark"></span><span><strong>Sensitive</strong><small>Earlier alerts</small></span></button>
+            </div>
+          </article>
+          <article class="safety-note">
+            <div class="safety-icon">!</div>
+            <div><span class="section-kicker">A NOTE ON SAFETY</span><h2>Feeling tired? Take a break.</h2><p>Alerts can be missed and camera estimates can be wrong. If you're sleepy, pull over somewhere safe and rest. Never adjust this app while driving.</p></div>
+          </article>
+        </section>
+        <footer class="page-footer"><span>WAKEGUARD <span class="footer-divider">/</span> BUILT FOR THE JOURNEY</span><span>Stay alert. Arrive safe.</span></footer>
+      </main>
+    </div>
+    <div class="alert-overlay" id="alert-overlay" role="alertdialog" aria-modal="true" aria-labelledby="overlay-title" hidden>
+      <div class="alert-dialog">
+        <div class="dialog-mark">!</div><span class="section-kicker">DROWSINESS DETECTED</span>
+        <h2 id="overlay-title">Please take a break.</h2>
+        <p id="overlay-message">A sign of fatigue was detected. When safe, pull over and rest.</p>
+        <div class="dialog-actions">
+          <button class="button button-primary" id="overlay-share-button" type="button">Share my location</button>
+          <button class="button button-quiet" id="dismiss-alert-button" type="button">I'm stopped safely — dismiss</button>
+        </div>
+        <small>Do not interact with this alert while driving.</small>
+      </div>
+    </div>
+  </body>
+</html>
